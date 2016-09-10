@@ -64,24 +64,24 @@ while true; do
 	shift
 done
 
-#amidi -p hw:6,0,0 --send-hex '90 00 3c'
-#amidi -p hw:6,0,0 --send-hex '90 00 00'
-
 # Checks to see if file is specified and if readable
 if [ -r $filename ] && [ "$filename" != "" ]; then
 	# Plays if filename not in lockfile or if overlap is enabled
 	notinlock=! 
 	if ! grep -Fq "$filename" $lf || ($overlap); then
-		echo "$filename $$" >> $lf
-		# TODO: Why is this surrounded by parens
-		(aplay -q $filename)
+		# create subshell to play sound
+		(aplay -q $filename) &
+		echo "$filename $!" >> $lf
+		
+		# Wait for child to die and remove entry from lock file
+		wait $! 2> /dev/null
 		# Not portable requires GNU sed
 		# Using # delimiter to avoid issues with file path
-		sed -i "\#$filename $$#d" $lf
+		sed -i "\#$filename $!#d" $lf
+	# If file is being played and should be canceled
 	elif grep -Fq "$filename" $lf && ($cancel); then
 		pid=$(grep "$filename" $lf | awk -F " " '{print $2}')
 		kill -9 $pid
-		sed -i "\#$filename $pid#d" $lf
 	fi
 else
 	# Doesn't reflect not readable should be rewritten
