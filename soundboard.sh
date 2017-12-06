@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# This program allows the use of dmenu to view information from the ESPDIC
+# This program allows the playing of audio files in a way similar to a real soundboard
 # Copyright (c) 2017 Zachary Matthews.
 #
 # This program is free software: you can redistribute it and/or modify
