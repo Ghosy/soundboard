@@ -29,7 +29,7 @@ cat /dev/null >> $lf
 
 print_usage() {
 	echo -e "Usage: soundboard [OPTION]..." 
-	echo -e "  -c, --cancel     allows the selected file to be stoped if playing"
+	echo -e "  -c, --cancel     allows the selected file to be stopped if playing"
 	echo -e "  -f, --file       file to be played"
 	echo -e "  -h, --help       show this help message"
 	echo -e "  -o, --overlap    allows sound to be played multiple times at once"
@@ -44,7 +44,7 @@ fi
 
 parsed=`getopt --options $short --longoptions $long --name "$0" -- "$@"`
 if [[ $? != 0 ]]; then
-	# Getopt not getting correcty aruments
+	# Getopt not getting arguments correctly
 	exit 2
 fi
 
@@ -72,7 +72,7 @@ while true; do
 			;;
 		*)
 			# Unknown option
-			echo "Arguement not properly handled"
+			echo "Argument not properly handled"
 			exit 64
 			;;
 	esac
