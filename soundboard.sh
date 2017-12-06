@@ -42,7 +42,7 @@ if [[ $? != 4 ]]; then
 	exit 1
 fi
 
-parsed=`getopt --options $short --longoptions $long --name "$0" -- "$@"`
+parsed=$(getopt --options $short --longoptions $long --name "$0" -- "$@")
 if [[ $? != 0 ]]; then
 	# Getopt not getting arguments correctly
 	exit 2
@@ -80,12 +80,12 @@ while true; do
 done
 
 # Checks to see if file is specified and if readable
-if [ -r $filename ] && [ "$filename" != "" ]; then
+if [ -r "$filename" ] && [ "$filename" != "" ]; then
 	# Plays if filename not in lockfile or if overlap is enabled
 	notinlock=! 
 	if ! grep -Fq "$filename" $lf || ($overlap); then
 		# create subshell to play sound
-		(aplay -q $filename) &
+		(aplay -q "$filename") &
 		echo "$filename $!" >> $lf
 		
 		# Wait for child to die and remove entry from lock file
@@ -96,7 +96,7 @@ if [ -r $filename ] && [ "$filename" != "" ]; then
 	# If file is being played and should be canceled
 	elif grep -Fq "$filename" $lf && ($cancel); then
 		pid=$(grep "$filename" $lf | awk -F " " '{print $2}')
-		kill -9 $pid
+		kill -9 "$pid"
 	fi
 else
 	# Doesn't reflect not readable should be rewritten
