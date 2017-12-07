@@ -82,7 +82,6 @@ done
 # Checks to see if file is specified and if readable
 if [ -r "$filename" ] && [ "$filename" != "" ]; then
 	# Plays if filename not in lockfile or if overlap is enabled
-	notinlock=! 
 	if ! grep -Fq "$filename" $lf || ($overlap); then
 		# create subshell to play sound
 		(aplay -q "$filename") &
@@ -92,7 +91,7 @@ if [ -r "$filename" ] && [ "$filename" != "" ]; then
 		wait $! 2> /dev/null
 		# Not portable requires GNU sed
 		# Using # delimiter to avoid issues with file path
-		sed -i "\#$filename $!#d" $lf
+		sed -i "\\#$filename $!#d" $lf
 	# If file is being played and should be canceled
 	elif grep -Fq "$filename" $lf && ($cancel); then
 		pid=$(grep "$filename" $lf | awk -F " " '{print $2}')
