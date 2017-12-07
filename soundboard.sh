@@ -36,74 +36,78 @@ print_usage() {
 	exit 0
 }
 
-getopt --test > /dev/null
-if [[ $? != 4 ]]; then
-	echo "getopt is not functioning as anticipated"
-	exit 1
-fi
+main() {
+	getopt --test > /dev/null
+	if [[ $? != 4 ]]; then
+		echo "getopt is not functioning as anticipated"
+		exit 1
+	fi
 
-parsed=$(getopt --options $short --longoptions $long --name "$0" -- "$@")
-if [[ $? != 0 ]]; then
-	# Getopt not getting arguments correctly
-	exit 2
-fi
+	parsed=$(getopt --options $short --longoptions $long --name "$0" -- "$@")
+	if [[ $? != 0 ]]; then
+		# Getopt not getting arguments correctly
+		exit 2
+	fi
 
-eval set -- "$parsed"
+	eval set -- "$parsed"
 
-while true; do
-	case $1 in
-		-c|--cancel)
-			cancel=true
-			;;
-		-f|--file)
-			filename="$2"
-			shift
-			;;
-		-h|--help)
-			# Print help/usage
-			print_usage
-			;;
-		-o|--overlap)
-			overlap=true
-			;;
-		--)
-			shift
-			break
-			;;
-		*)
-			# Unknown option
-			echo "Argument not properly handled"
-			exit 64
-			;;
-	esac
-	shift
-done
+	while true; do
+		case $1 in
+			-c|--cancel)
+				cancel=true
+				;;
+			-f|--file)
+				filename="$2"
+				shift
+				;;
+			-h|--help)
+				# Print help/usage
+				print_usage
+				;;
+			-o|--overlap)
+				overlap=true
+				;;
+			--)
+				shift
+				break
+				;;
+			*)
+				# Unknown option
+				echo "Argument not properly handled"
+				exit 64
+				;;
+		esac
+		shift
+	done
 
-# Checks to see if file is specified and if readable
-if [ -r "$filename" ] && [ "$filename" != "" ]; then
-	# Plays if filename not in lockfile or if overlap is enabled
-	if ! grep -Fq "$filename" $lf || ($overlap); then
-		# create subshell to play sound
-		(aplay -q "$filename") &
-		echo "$filename $!" >> $lf
-		
-		# Wait for child to die and remove entry from lock file
-		wait $! 2> /dev/null
-		# Not portable requires GNU sed
-		# Using # delimiter to avoid issues with file path
-		sed -i "\\#$filename $!#d" $lf
-	# If file is being played and should be canceled
-	elif grep -Fq "$filename" $lf && ($cancel); then
-		pid=$(grep "$filename" $lf | awk -F " " '{print $2}')
-		if kill -0 "$pid"; then
-			kill -9 "$pid"
-		else
+	# Checks to see if file is specified and if readable
+	if [ -r "$filename" ] && [ "$filename" != "" ]; then
+		# Plays if filename not in lockfile or if overlap is enabled
+		if ! grep -Fq "$filename" $lf || ($overlap); then
+			# create subshell to play sound
+			(aplay -q "$filename") &
+			echo "$filename $!" >> $lf
+
+			# Wait for child to die and remove entry from lock file
+			wait $! 2> /dev/null
 			# Not portable requires GNU sed
 			# Using # delimiter to avoid issues with file path
-			sed -i "\\#$filename $pid#d" $lf
+			sed -i "\\#$filename $!#d" $lf
+		# If file is being played and should be canceled
+		elif grep -Fq "$filename" $lf && ($cancel); then
+			pid=$(grep "$filename" $lf | awk -F " " '{print $2}')
+			if kill -0 "$pid"; then
+				kill -9 "$pid"
+			else
+				# Not portable requires GNU sed
+				# Using # delimiter to avoid issues with file path
+				sed -i "\\#$filename $pid#d" $lf
+			fi
 		fi
+	else
+		# Doesn't reflect not readable should be rewritten
+		echo -e "File not found" >&2
 	fi
-else
-	# Doesn't reflect not readable should be rewritten
-	echo -e "File not found" >&2
-fi
+}
+
+main "$@"
