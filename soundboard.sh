@@ -95,7 +95,13 @@ if [ -r "$filename" ] && [ "$filename" != "" ]; then
 	# If file is being played and should be canceled
 	elif grep -Fq "$filename" $lf && ($cancel); then
 		pid=$(grep "$filename" $lf | awk -F " " '{print $2}')
-		kill -9 "$pid"
+		if kill -0 "$pid"; then
+			kill -9 "$pid"
+		else
+			# Not portable requires GNU sed
+			# Using # delimiter to avoid issues with file path
+			sed -i "\\#$filename $pid#d" $lf
+		fi
 	fi
 else
 	# Doesn't reflect not readable should be rewritten
