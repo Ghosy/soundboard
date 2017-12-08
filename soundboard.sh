@@ -82,6 +82,15 @@ main() {
 
 	# Checks to see if file is specified and if readable
 	if [ -r "$filename" ] && [ "$filename" != "" ]; then
+
+		# Check for bad entries in lock file
+		pid=$(grep "$filename" $lf | awk -F " " '{print $2}')
+		if ! kill -0 "$pid"; then
+			# Not portable requires GNU sed
+			# Using # delimiter to avoid issues with file path
+			sed -i "\\#$filename $pid#d" $lf
+		fi
+
 		# Plays if filename not in lockfile or if overlap is enabled
 		if ! grep -Fq "$filename" $lf || ($overlap); then
 			# create subshell to play sound
@@ -96,13 +105,7 @@ main() {
 		# If file is being played and should be canceled
 		elif grep -Fq "$filename" $lf && ($cancel); then
 			pid=$(grep "$filename" $lf | awk -F " " '{print $2}')
-			if kill -0 "$pid"; then
-				kill -9 "$pid"
-			else
-				# Not portable requires GNU sed
-				# Using # delimiter to avoid issues with file path
-				sed -i "\\#$filename $pid#d" $lf
-			fi
+			kill -9 "$pid"
 		fi
 	else
 		# Doesn't reflect not readable should be rewritten
