@@ -85,7 +85,7 @@ main() {
 
 		# Check for bad entries in lock file
 		pid=$(grep "$filename" $lf | awk -F " " '{print $2}')
-		if ! kill -0 "$pid"; then
+		if [[ $pid =~ ^[0-9]+$ ]] && ! kill -0 "$pid"; then
 			# Not portable requires GNU sed
 			# Using # delimiter to avoid issues with file path
 			sed -i "\\#$filename $pid#d" $lf
