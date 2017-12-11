@@ -21,19 +21,21 @@ lf=/tmp/sbLockFile
 overlap=false
 cancel=false
 playcmd=""
+volume=100
 # Getopt
 short=cf:ho
-long=cancel,file:,help,overlap
+long=cancel,file:,help,overlap,volume:
 
 # Create lockfile if none exists
 cat /dev/null >> $lf
 
 print_usage() {
 	echo -e "Usage: soundboard [OPTION]..." 
-	echo -e "  -c, --cancel     allows the selected file to be stopped if playing"
-	echo -e "  -f, --file       file to be played"
-	echo -e "  -h, --help       show this help message"
-	echo -e "  -o, --overlap    allows sound to be played multiple times at once"
+	echo -e "  -c, --cancel           allows the selected file to be stopped if playing"
+	echo -e "  -f, --file             file to be played"
+	echo -e "  -h, --help             show this help message"
+	echo -e "      --volume=VOLUME    set the level for clip's volume(0-100)"
+	echo -e "  -o, --overlap          allows sound to be played multiple times at once"
 	exit 0
 }
 
@@ -78,6 +80,15 @@ main() {
 				# Print help/usage
 				print_usage
 				;;
+			--volume)
+				if [[ ! $2 =~ ^[0-9]+$ ]] || [ ! "$2" -ge 0 ] || [ ! "$2" -le 100 ]; then
+					echo -e "\"$2\" is not a valid value for volume"
+					echo -e "volume must be within 0-100"
+					exit 1
+				fi
+				volume="$2"
+				shift
+				;;
 			-o|--overlap)
 				overlap=true
 				;;
@@ -108,7 +119,7 @@ main() {
 		# Plays if filename not in lockfile or if overlap is enabled
 		if ! grep -Fq "$filename" $lf || ($overlap); then
 			# create subshell to play sound
-			($playcmd --no-terminal "$filename") &
+			($playcmd --no-terminal --volume="$volume" "$filename") &
 			echo "$filename $!" >> $lf
 
 			# Wait for child to die and remove entry from lock file
