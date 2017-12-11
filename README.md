@@ -19,6 +19,4 @@ or
 `bash install.sh`
 
 4. Run soundboard
-*First launch downloads and prepares a copy of ESPDIC.*
-`soundboard`
-
+`soundboard -f /path/to/file`
