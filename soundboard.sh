@@ -20,6 +20,7 @@ lf=/tmp/sbLockFile
 
 overlap=false
 cancel=false
+playcmd=""
 # Getopt
 short=cf:ho
 long=cancel,file:,help,overlap
@@ -36,7 +37,20 @@ print_usage() {
 	exit 0
 }
 
+check_depends() {
+	if type mpv >>/dev/null; then
+		playcmd="mpv"
+	elif type mplayer >>/dev/null; then
+		playcmd="mplayer"
+	else
+		echo "Neither mpv or mplayer are not installed. Please install either mpv or mplayer."
+		exit 1
+	fi
+}
+
 main() {
+	check_depends
+
 	getopt --test > /dev/null
 	if [[ $? != 4 ]]; then
 		echo "getopt is not functioning as anticipated"
@@ -94,7 +108,7 @@ main() {
 		# Plays if filename not in lockfile or if overlap is enabled
 		if ! grep -Fq "$filename" $lf || ($overlap); then
 			# create subshell to play sound
-			(aplay -q "$filename") &
+			($playcmd --no-terminal "$filename") &
 			echo "$filename $!" >> $lf
 
 			# Wait for child to die and remove entry from lock file
