@@ -46,7 +46,7 @@ check_depends() {
 	elif type mplayer &>/dev/null; then
 		playcmd="mplayer"
 	else
-		echo "Neither mpv or mplayer are not installed. Please install either mpv or mplayer."
+		echo "Neither mpv or mplayer are not installed. Please install either mpv or mplayer." >&2
 		exit 1
 	fi
 }
@@ -56,7 +56,7 @@ main() {
 
 	getopt --test > /dev/null
 	if [[ $? != 4 ]]; then
-		echo "getopt is not functioning as anticipated"
+		echo "getopt is not functioning as anticipated" >&2
 		exit 1
 	fi
 
@@ -83,7 +83,7 @@ main() {
 				;;
 			--mplayer-override)
 				if ! type mplayer &>/dev/null; then
-					echo -e "mplayer must be installed for --mplayer-override"
+					echo -e "mplayer must be installed for --mplayer-override" >&2
 					exit 1
 				else
 					playcmd="mplayer"
@@ -95,8 +95,8 @@ main() {
 				;;
 			--volume)
 				if [[ ! $2 =~ ^[0-9]+$ ]] || [ ! "$2" -ge 0 ] || [ ! "$2" -le 100 ]; then
-					echo -e "\"$2\" is not a valid value for volume"
-					echo -e "volume must be within 0-100"
+					echo -e "\"$2\" is not a valid value for volume" >&2
+					echo -e "volume must be within 0-100" >&2
 					exit 1
 				fi
 				volume="$2"
@@ -108,7 +108,7 @@ main() {
 				;;
 			*)
 				# Unknown option
-				echo "Argument not properly handled"
+				echo "Argument not properly handled" >&2
 				exit 64
 				;;
 		esac
