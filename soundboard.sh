@@ -24,25 +24,26 @@ playcmd=""
 volume=100
 # Getopt
 short=cf:ho
-long=cancel,file:,help,overlap,volume:
+long=cancel,file:,help,mplayer-override,overlap,volume:
 
 # Create lockfile if none exists
 cat /dev/null >> $lf
 
 print_usage() {
 	echo -e "Usage: soundboard [OPTION]..." 
-	echo -e "  -c, --cancel           allows the selected file to be stopped if playing"
-	echo -e "  -f, --file             file to be played"
-	echo -e "  -h, --help             show this help message"
-	echo -e "      --volume=VOLUME    set the level for clip's volume(0-100)"
-	echo -e "  -o, --overlap          allows sound to be played multiple times at once"
+	echo -e "  -c, --cancel              allows the selected file to be stopped if playing"
+	echo -e "  -f, --file                file to be played"
+	echo -e "  -h, --help                show this help message"
+	echo -e "      --mplayer-override    override use of mpv with mplayer"
+	echo -e "  -o, --overlap             allows sound to be played multiple times at once"
+	echo -e "      --volume=VOLUME       set the level for clip's volume(0-100)"
 	exit 0
 }
 
 check_depends() {
-	if type mpv >>/dev/null; then
+	if type mpv &>/dev/null; then
 		playcmd="mpv"
-	elif type mplayer >>/dev/null; then
+	elif type mplayer &>/dev/null; then
 		playcmd="mplayer"
 	else
 		echo "Neither mpv or mplayer are not installed. Please install either mpv or mplayer."
@@ -80,6 +81,18 @@ main() {
 				# Print help/usage
 				print_usage
 				;;
+			--mplayer-override)
+				if ! type mplayer &>/dev/null; then
+					echo -e "mplayer must be installed for --mplayer-override"
+					exit 1
+				else
+					playcmd="mplayer"
+				fi
+				
+				;;
+			-o|--overlap)
+				overlap=true
+				;;
 			--volume)
 				if [[ ! $2 =~ ^[0-9]+$ ]] || [ ! "$2" -ge 0 ] || [ ! "$2" -le 100 ]; then
 					echo -e "\"$2\" is not a valid value for volume"
@@ -88,9 +101,6 @@ main() {
 				fi
 				volume="$2"
 				shift
-				;;
-			-o|--overlap)
-				overlap=true
 				;;
 			--)
 				shift
