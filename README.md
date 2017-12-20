@@ -19,7 +19,7 @@ or
 `bash install.sh`
 
 4. Run soundboard  
-`soundboard -f /path/to/file`
+`soundboard -cf /path/to/file`
 
 ## Usage Example
 `soundboard -of /path/to/file.wav`  
