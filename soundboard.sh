@@ -129,7 +129,7 @@ main() {
 		# Plays if filename not in lockfile or if overlap is enabled
 		if ! grep -Fq "$filename" $lf || ($overlap); then
 			# create subshell to play sound
-			($playcmd --no-terminal --volume="$volume" "$filename") &
+			($playcmd --no-terminal --no-video --volume="$volume" "$filename") &
 			echo "$filename $!" >> $lf
 
 			# Wait for child to die and remove entry from lock file
