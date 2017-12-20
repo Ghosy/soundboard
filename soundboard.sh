@@ -30,9 +30,9 @@ long=cancel,file:,help,mplayer-override,overlap,volume:
 cat /dev/null >> $lf
 
 print_usage() {
-	echo -e "Usage: soundboard [OPTION]..." 
+	echo -e "Usage: soundboard -f file [OPTION]..." 
 	echo -e "  -c, --cancel              allows the selected file to be stopped if playing"
-	echo -e "  -f, --file                file to be played"
+	echo -e "  -f, --file=FILE           the FILE to be played"
 	echo -e "  -h, --help                show this help message"
 	echo -e "      --mplayer-override    override use of mpv with mplayer"
 	echo -e "  -o, --overlap             allows sound to be played multiple times at once"
@@ -115,8 +115,13 @@ main() {
 		shift
 	done
 
+	if [ "$filename" == "" ]; then
+		echo -e "A file must be specified using -f" >&2
+		exit 1;
+	fi
+
 	# Checks to see if file is specified and if readable
-	if [ -r "$filename" ] && [ "$filename" != "" ]; then
+	if [ -r "$filename" ]; then
 
 		# Check for bad entries in lock file
 		pid=$(grep "$filename" $lf | awk -F " " '{print $2}')
