@@ -27,3 +27,6 @@ This example uses the overlap flag, so if the command was run again, file.wav wo
 
 `soundboard -cf /path/to/file.wav`  
 This example uses the cancel flag. If the same command runs again, while file.wav is playing, the playing of file.wav will stop. To start playing file.wav you must run the command again.
+
+## License
+This project is licensed under the GNU General Public License version 3(GPLv3) - see the [LICENSE.txt](LICENSE.txt) file for details.
