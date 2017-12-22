@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin env bash
 #
 # This program allows the playing of audio files in a way similar to a real soundboard
 # Copyright (c) 2017 Zachary Matthews.
