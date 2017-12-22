@@ -23,14 +23,15 @@ cancel=false
 playcmd=""
 volume=100
 # Getopt
-short=cf:ho
-long=cancel,file:,help,mplayer-override,overlap,volume:
+short=acf:ho
+long=all,cancel,file:,help,mplayer-override,overlap,volume:
 
 # Create lockfile if none exists
 cat /dev/null >> $lf
 
 print_usage() {
 	echo -e "Usage: soundboard -f file [OPTION]..." 
+	echo -e "  -a, --all                 cancels all currently playing sounds"
 	echo -e "  -c, --cancel              allows the selected file to be stopped if playing"
 	echo -e "  -f, --file=FILE           the FILE to be played"
 	echo -e "  -h, --help                show this help message"
@@ -49,6 +50,14 @@ check_depends() {
 		echo "Neither mpv or mplayer are not installed. Please install either mpv or mplayer." >&2
 		exit 1
 	fi
+}
+
+cancel_all() {
+	cat "$lf" | while read line; do
+		pid=$(echo "$line" | awk -F " " '{print $2}')
+		kill -9 "$pid"
+	done
+	exit 0
 }
 
 main() {
@@ -70,6 +79,9 @@ main() {
 
 	while true; do
 		case $1 in
+			-a|--all)
+				cancel_all
+				;;
 			-c|--cancel)
 				cancel=true
 				;;
