@@ -32,7 +32,7 @@ cat /dev/null >> $lf
 print_usage() {
 	echo -e "Usage: soundboard -f file [OPTION]..." 
 	echo -e "  -a, --all                 cancels all currently playing sounds"
-	echo -e "  -c, --cancel              allows the selected file to be stopped if playing"
+	echo -e "  -c, --cancel              allows the file, from -f, to be stopped if playing"
 	echo -e "  -f, --file=FILE           the FILE to be played"
 	echo -e "  -h, --help                show this help message"
 	echo -e "      --mplayer-override    override use of mpv with mplayer"
@@ -94,6 +94,7 @@ main() {
 				print_usage
 				;;
 			--mplayer-override)
+				# Ensure mplayer is in fact installed
 				if ! type mplayer &>/dev/null; then
 					echo -e "mplayer must be installed for --mplayer-override" >&2
 					exit 1
@@ -106,6 +107,7 @@ main() {
 				overlap=true
 				;;
 			--volume)
+				# Check volume recieved is a valid number
 				if [[ ! $2 =~ ^[0-9]+$ ]] || [ ! "$2" -ge 0 ] || [ ! "$2" -le 100 ]; then
 					echo -e "\"$2\" is not a valid value for volume" >&2
 					echo -e "volume must be within 0-100" >&2
@@ -127,6 +129,7 @@ main() {
 		shift
 	done
 
+	# Ensure a file is specified
 	if [ "$filename" == "" ]; then
 		echo -e "A file must be specified using -f" >&2
 		exit 1;
