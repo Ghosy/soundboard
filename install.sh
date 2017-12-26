@@ -19,6 +19,7 @@ if [[ $EUID -ne 0 ]]; then
 	echo "You must be root to perform this action" 1>&2
 	exit 1
 else
+	printf "Installing soundboard... "
 	# Add to /bin/
 	cp "soundboard.sh" "/usr/local/bin/soundboard"
 
@@ -27,16 +28,22 @@ else
 
 	# Change owner
 	chown root "/usr/local/bin/soundboard"
+	printf "Complete\n"
 
+	printf "Installing manpage... "
 	# Create manpage dir if it doesn't exist
 	mkdir -p "/usr/local/share/man/man1"
 
 	# Install manpage
 	cp "doc/soundboard.1" "/usr/local/share/man/man1"
-	gzip -q "/usr/local/share/man/man1/soundboard.1"
+	gzip -fq "/usr/local/share/man/man1/soundboard.1"
 
+	printf "Complete\n"
+
+	printf "Updating manpage database... "
 	# Update manpages database
 	mandb -q
+	printf "Complete\n"
 
 	echo "Install success"
 fi
