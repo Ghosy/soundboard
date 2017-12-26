@@ -20,13 +20,23 @@ if [[ $EUID -ne 0 ]]; then
 	exit 1
 else
 	# Add to /bin/
-	cp soundboard.sh /usr/local/bin/soundboard
+	cp "soundboard.sh" "/usr/local/bin/soundboard"
 
 	# Set permissions
 	chmod 755 "/usr/local/bin/soundboard"
 
 	# Change owner
 	chown root "/usr/local/bin/soundboard"
+
+	# Create manpage dir if it doesn't exist
+	mkdir -p "/usr/local/share/man/man1"
+
+	# Install manpage
+	cp "doc/soundboard.1" "/usr/local/share/man/man1"
+	gzip -q "/usr/local/share/man/man1/soundboard.1"
+
+	# Update manpages database
+	mandb -q
 
 	echo "Install success"
 fi
