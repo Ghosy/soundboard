@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
-# This program allows the installation of dmenu_eo
+# This program allows the installation of soundboard
 # Copyright (c) 2017 Zachary Matthews.
 #
 # This program is free software: you can redistribute it and/or modify
