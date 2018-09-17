@@ -20,22 +20,14 @@ if [[ $EUID -ne 0 ]]; then
 	exit 1
 else
 	printf "Installing soundboard... "
-	# Add to /bin/
-	cp "soundboard.sh" "/usr/local/bin/soundboard"
+	# Install bin
+	install -Dm 755 "soundboard.sh" "/usr/local/bin/soundboard"
 
-	# Set permissions
-	chmod 755 "/usr/local/bin/soundboard"
-
-	# Change owner
-	chown root "/usr/local/bin/soundboard"
 	printf "Complete\n"
 
 	printf "Installing manpage... "
-	# Create manpage dir if it doesn't exist
-	mkdir -p "/usr/local/share/man/man1"
-
 	# Install manpage
-	cp "doc/soundboard.1" "/usr/local/share/man/man1"
+	install -Dm 644 "doc/sonudboard.1" "/usr/local/share/man/man1"
 	gzip -fq "/usr/local/share/man/man1/soundboard.1"
 
 	printf "Complete\n"
