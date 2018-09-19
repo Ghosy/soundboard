@@ -27,7 +27,7 @@ else
 
 	printf "Installing manpage... "
 	# Install manpage
-	install -Dm 644 "doc/sonudboard.1" "/usr/local/share/man/man1"
+	install -Dm 644 "doc/soundboard.1" "/usr/local/share/man/man1"
 	gzip -fq "/usr/local/share/man/man1/soundboard.1"
 
 	printf "Complete\n"
