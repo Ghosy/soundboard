@@ -25,6 +25,10 @@ else
 
 	printf "Complete\n"
 
+	printf "Installing soundboard completions... "
+	install -Dm 644 "doc/soundboard.bashcomp" "/usr/share/bash-completion/completions/soundboard"
+	printf "Complete\n"
+
 	printf "Installing manpage... "
 	# Install manpage
 	install -Dm 644 "doc/soundboard.1" "/usr/local/share/man/man1"
