@@ -22,6 +22,7 @@ _soundboard() {
 			--help
 			--mplayer-override
 			--overlap
+			--version
 			--volume"
 
 		if [[ ${cur} == -* ]] ; then

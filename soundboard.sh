@@ -24,7 +24,7 @@ playcmd=""
 volume=100
 # Getopt
 short=acf:ho
-long=all,cancel,file:,help,mplayer-override,overlap,volume:
+long=all,cancel,file:,help,mplayer-override,overlap,volume:,version
 
 # Create lockfile if none exists
 cat /dev/null >> $lf
@@ -37,7 +37,18 @@ print_usage() {
 	echo -e "  -h, --help                show this help message"
 	echo -e "      --mplayer-override    override use of mpv with mplayer"
 	echo -e "  -o, --overlap             allows sound to be played multiple times at once"
+	echo -e "      --version             show the version information for soundboard"
 	echo -e "      --volume=VOLUME       set the level for clip's volume(0-100)"
+	exit 0
+}
+
+print_version() {
+	echo "soundboard, version 0.1"
+	echo "Copyright (C) 2015-2018 Zachary Matthews"
+	echo "License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>"
+	echo ""
+	echo "This is free software; you are free to change and redistribute it."
+	echo "There is NO WARRANTY, to the extent permitted by law."
 	exit 0
 }
 
@@ -105,6 +116,9 @@ main() {
 				;;
 			-o|--overlap)
 				overlap=true
+				;;
+			--version)
+				print_version
 				;;
 			--volume)
 				# Check volume recieved is a valid number
