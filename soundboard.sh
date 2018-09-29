@@ -30,15 +30,15 @@ long=all,cancel,file:,help,mplayer-override,overlap,volume:,version
 cat /dev/null >> $lf
 
 print_usage() {
-	echo -e "Usage: soundboard -f file [OPTION]..." 
-	echo -e "  -a, --all                 cancels all currently playing sounds"
-	echo -e "  -c, --cancel              allows the file, from -f, to be stopped if playing"
-	echo -e "  -f, --file=FILE           the FILE to be played"
-	echo -e "  -h, --help                show this help message"
-	echo -e "      --mplayer-override    override use of mpv with mplayer"
-	echo -e "  -o, --overlap             allows sound to be played multiple times at once"
-	echo -e "      --version             show the version information for soundboard"
-	echo -e "      --volume=VOLUME       set the level for clip's volume(0-100)"
+	echo "Usage: soundboard -f file [OPTION]..." 
+	echo "  -a, --all                 cancels all currently playing sounds"
+	echo "  -c, --cancel              allows the file, from -f, to be stopped if playing"
+	echo "  -f, --file=FILE           the FILE to be played"
+	echo "  -h, --help                show this help message"
+	echo "      --mplayer-override    override use of mpv with mplayer"
+	echo "  -o, --overlap             allows sound to be played multiple times at once"
+	echo "      --version             show the version information for soundboard"
+	echo "      --volume=VOLUME       set the level for clip's volume(0-100)"
 	exit 0
 }
 
@@ -107,7 +107,7 @@ main() {
 			--mplayer-override)
 				# Ensure mplayer is in fact installed
 				if ! type mplayer &>/dev/null; then
-					echo -e "mplayer must be installed for --mplayer-override" >&2
+					echo "mplayer must be installed for --mplayer-override" >&2
 					exit 1
 				else
 					playcmd="mplayer"
@@ -123,8 +123,8 @@ main() {
 			--volume)
 				# Check volume recieved is a valid number
 				if [[ ! $2 =~ ^[0-9]+$ ]] || [ ! "$2" -ge 0 ] || [ ! "$2" -le 100 ]; then
-					echo -e "\"$2\" is not a valid value for volume" >&2
-					echo -e "volume must be within 0-100" >&2
+					echo "\"$2\" is not a valid value for volume" >&2
+					echo "volume must be within 0-100" >&2
 					exit 1
 				fi
 				volume="$2"
@@ -145,7 +145,7 @@ main() {
 
 	# Ensure a file is specified
 	if [ "$filename" == "" ]; then
-		echo -e "A file must be specified using -f" >&2
+		echo "A file must be specified using -f" >&2
 		exit 1;
 	fi
 
@@ -178,7 +178,7 @@ main() {
 		fi
 	else
 		# Doesn't reflect not readable should be rewritten
-		echo -e "File not found" >&2
+		echo "File not found" >&2
 	fi
 }
 
