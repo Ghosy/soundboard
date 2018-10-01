@@ -64,10 +64,10 @@ check_depends() {
 }
 
 cancel_all() {
-	cat "$lf" | while read line; do
+	while read -r line; do
 		pid=$(echo "$line" | awk -F " " '{print $2}')
 		kill -9 "$pid"
-	done
+	done < $lf
 	exit 0
 }
 

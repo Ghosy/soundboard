@@ -23,23 +23,23 @@ else
 	# Install bin
 	install -Dm 755 "soundboard.sh" "/usr/local/bin/soundboard"
 
-	printf "Complete\n"
+	printf "Complete\\n"
 
 	printf "Installing soundboard completions... "
 	install -Dm 644 "doc/soundboard.bashcomp" "/usr/share/bash-completion/completions/soundboard"
-	printf "Complete\n"
+	printf "Complete\\n"
 
 	printf "Installing manpage... "
 	# Install manpage
 	install -Dm 644 "doc/soundboard.1" "/usr/local/share/man/man1"
 	gzip -fq "/usr/local/share/man/man1/soundboard.1"
 
-	printf "Complete\n"
+	printf "Complete\\n"
 
 	printf "Updating manpage database... "
 	# Update manpages database
 	mandb -q
-	printf "Complete\n"
+	printf "Complete\\n"
 
 	echo "Install success"
 fi
