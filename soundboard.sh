@@ -23,17 +23,16 @@ cancel=false
 playcmd=""
 volume=100
 # Getopt
-short=acf:ho
-long=all,cancel,file:,help,mplayer-override,overlap,volume:,version
+short=acho
+long=all,cancel,help,mplayer-override,overlap,volume:,version
 
 # Create lockfile if none exists
 cat /dev/null >> $lf
 
 print_usage() {
-	echo "Usage: soundboard -f file [OPTION]..." 
+	echo "Usage: soundboard [OPTION]... FILE" 
 	echo "  -a, --all                 cancels all currently playing sounds"
 	echo "  -c, --cancel              allows the file, from -f, to be stopped if playing"
-	echo "  -f, --file=FILE           the FILE to be played"
 	echo "  -h, --help                show this help message"
 	echo "      --mplayer-override    override use of mpv with mplayer"
 	echo "  -o, --overlap             allows sound to be played multiple times at once"
@@ -96,10 +95,6 @@ main() {
 			-c|--cancel)
 				cancel=true
 				;;
-			-f|--file)
-				filename="$2"
-				shift
-				;;
 			-h|--help)
 				# Print help/usage
 				print_usage
@@ -144,42 +139,45 @@ main() {
 	done
 
 	# Ensure a file is specified
-	if [ "$filename" == "" ]; then
-		echo "A file must be specified using -f" >&2
+	if [ "$*" == "" ]; then
+		echo "A file must be specified" >&2
 		exit 1;
 	fi
 
-	# Checks to see if file is specified and if readable
-	if [ -r "$filename" ]; then
+	# Loop through listed files
+	for filename in "$@"; do
+		# Checks to see if file is specified and if readable
+		if [ -r "$filename" ]; then
 
-		# Check for bad entries in lock file
-		pid=$(grep "$filename" $lf | awk -F " " '{print $2}')
-		if [[ $pid =~ ^[0-9]+$ ]] && ! kill -0 "$pid"; then
-			# Not portable requires GNU sed
-			# Using # delimiter to avoid issues with file path
-			sed -i "\\#$filename $pid#d" $lf
-		fi
-
-		# Plays if filename not in lockfile or if overlap is enabled
-		if ! grep -Fq "$filename" $lf || ($overlap); then
-			# create subshell to play sound
-			($playcmd --no-terminal --no-video --volume="$volume" "$filename") &
-			echo "$filename $!" >> $lf
-
-			# Wait for child to die and remove entry from lock file
-			wait $! 2> /dev/null
-			# Not portable requires GNU sed
-			# Using # delimiter to avoid issues with file path
-			sed -i "\\#$filename $!#d" $lf
-		# If file is being played and should be canceled
-		elif grep -Fq "$filename" $lf && ($cancel); then
+			# Check for bad entries in lock file
 			pid=$(grep "$filename" $lf | awk -F " " '{print $2}')
-			kill -9 "$pid"
+			if [[ $pid =~ ^[0-9]+$ ]] && ! kill -0 "$pid"; then
+				# Not portable requires GNU sed
+				# Using # delimiter to avoid issues with file path
+				sed -i "\\#$filename $pid#d" $lf
+			fi
+
+			# Plays if filename not in lockfile or if overlap is enabled
+			if ! grep -Fq "$filename" $lf || ($overlap); then
+				# create subshell to play sound
+				($playcmd --no-terminal --no-video --volume="$volume" "$filename") &
+				echo "$filename $!" >> $lf
+
+				# Wait for child to die and remove entry from lock file
+				wait $! 2> /dev/null
+				# Not portable requires GNU sed
+				# Using # delimiter to avoid issues with file path
+				sed -i "\\#$filename $!#d" $lf
+				# If file is being played and should be canceled
+			elif grep -Fq "$filename" $lf && ($cancel); then
+				pid=$(grep "$filename" $lf | awk -F " " '{print $2}')
+				kill -9 "$pid"
+			fi
+		else
+			# Doesn't reflect not readable should be rewritten
+			echo "File not found" >&2
 		fi
-	else
-		# Doesn't reflect not readable should be rewritten
-		echo "File not found" >&2
-	fi
+	done
 }
 
 main "$@"

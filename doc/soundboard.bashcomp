@@ -4,12 +4,6 @@ _soundboard() {
 		cur="${COMP_WORDS[COMP_CWORD]}"
 		prev="${COMP_WORDS[COMP_CWORD-1]}"
 		case $prev in
-			'-f' | '--file')
-				local IFS=$'\n'
-				compopt -o filenames
-				COMPREPLY=( $(compgen -f -- $cur) )
-				return 0
-				;;
 			'--volume')
 				COMPREPLY=( $(compgen -W "number" -- $cur) )
 				return 0
@@ -18,7 +12,6 @@ _soundboard() {
 
 		OPTS="--all
 			--cancel
-			--file
 			--help
 			--mplayer-override
 			--overlap
