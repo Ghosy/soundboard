@@ -62,10 +62,17 @@ check_depends() {
 	fi
 }
 
+# Kills file name provided, if in lock file
+cancel() {
+	regex=" ([0-9]+)$"
+	if [[ $(grep "$1" $lf) =~ $regex ]]; then
+		kill -9 "${BASH_REMATCH[1]}"
+	fi
+}
+
 cancel_all() {
 	while read -r line; do
-		pid=$(echo "$line" | awk -F " " '{print $2}')
-		kill -9 "$pid"
+		cancel "$line"
 	done < $lf
 	exit 0
 }
@@ -170,8 +177,7 @@ main() {
 				sed -i "\\#$filename $!#d" $lf
 				# If file is being played and should be canceled
 			elif grep -Fq "$filename" $lf && ($cancel); then
-				pid=$(grep "$filename" $lf | awk -F " " '{print $2}')
-				kill -9 "$pid"
+				cancel "$filename"
 			fi
 		else
 			# Doesn't reflect not readable should be rewritten
