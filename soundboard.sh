@@ -20,11 +20,12 @@ lf=/tmp/sbLockFile
 
 overlap=false
 cancel=false
+toggle=false
 playcmd=""
 volume=100
 # Getopt
-short=acho
-long=all,cancel,help,mplayer-override,overlap,volume:,version
+short=achot
+long=all,cancel,help,mplayer-override,overlap,toggle,version,volume:
 
 # Create lockfile if none exists
 cat /dev/null >> $lf
@@ -36,6 +37,7 @@ print_usage() {
 	echo "  -h, --help                show this help message"
 	echo "      --mplayer-override    override use of mpv with mplayer"
 	echo "  -o, --overlap             allows sound to be played multiple times at once"
+	echo "  -t, --toggle              starts playing file if not playing, kills if playing"
 	echo "      --version             show the version information for soundboard"
 	echo "      --volume=VOLUME       set the level for clip's volume(0-100)"
 	exit 0
@@ -119,6 +121,9 @@ main() {
 			-o|--overlap)
 				overlap=true
 				;;
+			-t|--toggle)
+				toggle=true
+				;;
 			--version)
 				print_version
 				;;
@@ -165,7 +170,7 @@ main() {
 			fi
 
 			# Plays if filename not in lockfile or if overlap is enabled
-			if ! grep -Fq "$filename" $lf || ($overlap); then
+			if ! grep -Fq "$filename" $lf && ! ($cancel) || ($overlap); then
 				# create subshell to play sound
 				($playcmd --no-terminal --no-video --volume="$volume" "$filename") &
 				echo "$filename $!" >> $lf
@@ -176,7 +181,7 @@ main() {
 				# Using # delimiter to avoid issues with file path
 				sed -i "\\#$filename $!#d" $lf
 				# If file is being played and should be canceled
-			elif grep -Fq "$filename" $lf && ($cancel); then
+			elif (grep -Fq "$filename" $lf && ($toggle)) || ($cancel); then
 				cancel "$filename"
 			fi
 		else

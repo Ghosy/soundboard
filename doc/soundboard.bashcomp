@@ -15,6 +15,7 @@ _soundboard() {
 			--help
 			--mplayer-override
 			--overlap
+			--toggle
 			--version
 			--volume"
 
