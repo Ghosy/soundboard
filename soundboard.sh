@@ -166,7 +166,7 @@ main() {
 			if [[ $pid =~ ^[0-9]+$ ]] && ! kill -0 "$pid"; then
 				# Not portable requires GNU sed
 				# Using # delimiter to avoid issues with file path
-				sed -i "\\#$filename $pid#d" $lf
+				sed -i "\\_$filename $pid_d" $lf
 			fi
 
 			# Plays if filename not in lockfile or if overlap is enabled
@@ -179,7 +179,7 @@ main() {
 				wait $! 2> /dev/null
 				# Not portable requires GNU sed
 				# Using # delimiter to avoid issues with file path
-				sed -i "\\#$filename $!#d" $lf
+				sed -i "\\_$filename $!_d" $lf
 				# If file is being played and should be canceled
 			elif (grep -Fq "$filename" $lf && ($toggle)) || ($cancel); then
 				cancel "$filename"
