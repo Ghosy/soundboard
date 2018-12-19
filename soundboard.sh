@@ -89,6 +89,7 @@ main() {
 	fi
 
 	parsed=$(getopt --options $short --longoptions $long --name "$0" -- "$@")
+	# shellcheck disable=SC2181
 	if [[ $? != 0 ]]; then
 		# Getopt not getting arguments correctly
 		exit 2
@@ -165,8 +166,8 @@ main() {
 			pid=$(grep "$filename" $lf | awk -F " " '{print $2}')
 			if [[ $pid =~ ^[0-9]+$ ]] && ! kill -0 "$pid"; then
 				# Not portable requires GNU sed
-				# Using # delimiter to avoid issues with file path
-				sed -i "\\_$filename $pid_d" $lf
+				# Using ; delimiter to avoid issues with file path
+				sed -i "\\;$filename $pid;d" $lf
 			fi
 
 			# Plays if filename not in lockfile or if overlap is enabled
