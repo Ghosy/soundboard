@@ -64,6 +64,13 @@ check_depends() {
 	fi
 }
 
+check_depend() {
+	if ! type "$1" &> /dev/null; then
+		echo "${1^} is not installed. Please install $1." >&2
+		exit 1
+	fi
+}
+
 # Kills file name provided, if in lock file
 cancel() {
 	regex=" ([0-9]+)$"
@@ -111,12 +118,8 @@ main() {
 				;;
 			--mplayer-override)
 				# Ensure mplayer is in fact installed
-				if ! type mplayer &>/dev/null; then
-					echo "mplayer must be installed for --mplayer-override" >&2
-					exit 1
-				else
-					playcmd="mplayer"
-				fi
+				check_depend "mplayer"
+				playcmd="mplayer"
 				
 				;;
 			-o|--overlap)
