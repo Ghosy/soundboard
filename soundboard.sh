@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # This program allows the playing of audio files in a way similar to a real soundboard
-# Copyright (c) 2017 Zachary Matthews.
+# Copyright (c) 2017-2019 Zachary Matthews.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
